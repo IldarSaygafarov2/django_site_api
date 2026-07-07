@@ -11,6 +11,8 @@ urlpatterns = [
 
     path('posts/', views.PostListView.as_view()),
     path('posts/<int:pk>/', views.PostDetailView.as_view()),
+    path('posts/<int:pk>/like/', views.add_like),
+    path('posts/<int:pk>/dislike/', views.add_dislike),
     path('posts/<int:post_id>/comments/create/', views.create_post_comment),
 
     path('auth/login/', TokenObtainPairView.as_view()),
@@ -19,3 +21,5 @@ urlpatterns = [
     path('users/me/', views.get_user_me),
     path('users/<int:user_id>/', views.get_user_profile),
 ]
+
+# i80cvovgc+p07

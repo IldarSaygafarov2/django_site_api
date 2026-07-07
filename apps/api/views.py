@@ -23,6 +23,7 @@ from .serializers import (
 
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from rest_framework.exceptions import ValidationError
 
 
 @extend_schema(responses={200: UserProfileSerializer})
@@ -209,3 +210,44 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_like(request, pk):
+    post = get_object_or_404(Post, id=pk)
+
+    if request.user == post.author:
+        raise ValidationError({'message': 'Автор поста не может ставить лайк'})
+
+    if request.user not in post.likes.user.all():
+        post.likes.user.add(request.user.id)
+        post.dislikes.user.remove(request.user.id)
+    else:
+        post.likes.user.remove(request.user.id)
+
+    return Response({
+        'post_id': post.id,
+        'likes': post.likes.user.count(),
+        'dislikes': post.dislikes.user.count()
+    })
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_dislike(request, pk):
+    post = get_object_or_404(Post, id=pk)
+
+    if request.user == post.author:
+        raise ValidationError({'message': 'Автор поста не может ставить лайк'})
+
+    if request.user not in post.dislikes.user.all():
+        post.dislikes.user.add(request.user.id)
+        post.likes.user.remove(request.user.id)
+    else:
+        post.dislikes.user.remove(request.user.id)
+
+    return Response({
+        'post_id': post.id,
+        'likes': post.likes.user.count(),
+        'dislikes': post.dislikes.user.count()
+    })
