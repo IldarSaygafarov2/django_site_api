@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Post: {{ post.title }}
+{% endblock %}
+
+{% block extra_css %}
+<link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"
+/>
+<style>
+    .swiper {
+      width: 100%;
+      height: 100%;
+    }
+
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .swiper-slide img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .swiper {
+      width: 100%;
+      height: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .swiper-slide {
+      background-size: cover;
+      background-position: center;
+    }
+
+    .mySwiper2 {
+      height: 80%;
+      width: 100%;
+    }
+
+    .mySwiper {
+      height: 20%;
+      box-sizing: border-box;
+      padding: 10px 0;
+    }
+
+    .mySwiper .swiper-slide {
+      width: 25%;
+      height: 100%;
+      opacity: 0.4;
+    }
+
+    .mySwiper .swiper-slide-thumb-active {
+      opacity: 1;
+    }
+
+    .swiper-slide img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper mySwiper2">
+                <div class="swiper-wrapper">
+                    {% for post_image in post.images.all %}
+                    <div class="swiper-slide">
+                        <img src="{{ post_image.image.url }}"/>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+            <div thumbsSlider="" class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    {% for post_image in post.images.all %}
+                    <div class="swiper-slide">
+                        <img src="{{ post_image.image.url }}"/>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <h1 class="text-center">{{ post.title }}</h1>
+
+            <ul class="list-group list-group-action">
+                <li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+                    <div>
+                        <b>Author: </b> {{ post.author.username|title }}
+                    </div>
+
+                    <div>
+                        {% if user.is_authenticated and user != post.author %}
+                        <a href="#" data-author-id="{{post.author.id}}" class="btn btn-danger unsubscribe-btn {% if not is_subscribed %} d-none {% endif %}">Unsubscribe</a>
+                        <a href="#" data-author-id="{{post.author.id}}" class="btn btn-success subscribe-btn {% if is_subscribed %} d-none {% endif %}">Subscribe</a>
+                        {% endif %}
+                    </div>
+
+                </li>
+                <li class="list-group-item list-group-item-action">
+                    <b>Category: </b> {{ post.category.name }}
+                </li>
+                <li class="list-group-item list-group-item-action">
+                    <b>Published at: </b> {{ post.created_at|date:"Y/m/d H:m:s" }}
+                </li> <!--2026/04/21 15:17:13-->
+                <li class="list-group-item list-group-item-action">
+                    <b>Views: </b> {{ post.views_quantity }}
+                </li> <!--2026/04/21 15:17:13-->
+                <li class="list-group-item list-group-item-action">
+                    <b>Likes: </b> {{ post.likes.user.count }}
+                </li> <!--2026/04/21 15:17:13-->
+                <li class="list-group-item list-group-item-action">
+                    <b>Dislikes: </b> {{ post.dislikes.user.count }}
+                </li> <!--2026/04/21 15:17:13-->
+                <li class="list-group-item list-group-item-action">
+                    <b>Comments: </b> 0
+                </li> <!--2026/04/21 15:17:13-->
+            </ul>
+
+            <div class="d-flex justify-content-between mt-4">
+                {% if request.user == post.author %}
+                <a href="{% url 'news-edit' post.slug %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'news-delete' post.slug %}" class="btn btn-danger">Delete</a>
+                {% elif request.user.is_authenticated and request.user != post.author %}
+                <a href="{% url 'vote' post.slug 'add_like' %}" class="btn btn-success">Like</a>
+                <a href="{% url 'vote' post.slug 'add_dislike' %}" class="btn btn-danger">Dislike</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    <div class="mt-5">
+        <h2 class="text-center">Full description</h2>
+        <p>{{ post.full_description }}</p>
+    </div>
+
+
+    <div class="mt-5">
+        <div class="row row-gap-4">
+
+            {% for comment in post.comments.all %}
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        {{ comment.created_at }}
+                    </div>
+                    <div class="card-body">
+                        <figure>
+                            <blockquote class="blockquote">
+                                <p>{{ comment.content }}</p>
+                            </blockquote>
+                            <figcaption class="blockquote-footer">
+                                {{ comment.user }}
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No comments</p>
+            {% endfor %}
+
+
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <form action="" class="mt-4" method="post">
+            {% csrf_token %}
+            <label for="">Comment</label>
+            <textarea required placeholder="Your comment" name="post_comment" id="" cols="30" rows="10"
+                      class="form-control"></textarea>
+            <button class="btn btn-primary mt-2">Submit</button>
+        </form>
+        {% else %}
+        <p>Only authenticated users can write comments....</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+<!--сделать переход на страницу /login/-->
+<!--при нажатии на Find More - нужно перенаправлять пользователя на страницу news -->
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+
+<script>
+    var swiper = new Swiper(".mySwiper", {
+      spaceBetween: 10,
+      slidesPerView: 4,
+      freeMode: true,
+      watchSlidesProgress: true,
+    });
+    var swiper2 = new Swiper(".mySwiper2", {
+      spaceBetween: 10,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      thumbs: {
+        swiper: swiper,
+      },
+    });
+
+    let subBtn = document.querySelector('.subscribe-btn');
+    let unsubBtn = document.querySelector('.unsubscribe-btn');
+
+     let postAuthorId = subBtn.getAttribute('data-author-id');
+
+    function makeRequest(url) {
+        fetch(url)
+        .then(response => response.json())
+        .then(result => {
+            unsubBtn.classList.toggle('d-none');
+            subBtn.classList.toggle('d-none');
+        })
+    }
+
+    subBtn.addEventListener('click', ()=>{
+        makeRequest(`http://127.0.0.1:8000/users/${postAuthorId}/follow/`)
+    });
+
+    unsubBtn.addEventListener('click', ()=>{
+        makeRequest(`http://127.0.0.1:8000/users/${postAuthorId}/unfollow/`)
+    });
+
+</script>
+{% endblock %}

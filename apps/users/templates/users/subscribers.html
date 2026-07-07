@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Subscribers
+{% endblock %}
+
+
+{% block content %}
+
+<h2>Followers</h2>
+{% for subscriber in user.profile.subscribers.subscriber.all %}
+<p>
+    {{ subscriber.username }}<br>
+    {{ subscriber.first_name }}<br>
+    {{ subscriber.email }}<br>
+</p>
+<hr />
+{% endfor %}
+
+
+<h2>Following users</h2>
+{% for subscriber in following_users %}
+<p>
+    {{ subscriber.username }}<br>
+    {{ subscriber.first_name }}<br>
+    {{ subscriber.email }}<br>
+</p>
+<hr />
+{% endfor %}
+
+
+{% endblock %}
+

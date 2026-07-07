@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Delete post
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    html, body {
+        height: 100%;
+    }
+
+    .delete-form {
+        height: calc(100% - 59px);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<form action=""
+      method="post"
+      class="delete-form d-flex justify-content-center align-items-center"
+>
+    {% csrf_token %}
+
+
+    <input type="submit" value="Yes?" class="btn btn-danger fs-1">
+    <a href="{{ post.get_absolute_url }}" class="btn btn-info fs-1">
+        No?
+    </a>
+</form>
+{% endblock %}

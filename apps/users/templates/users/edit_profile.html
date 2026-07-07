@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit "{{ user.username }}" profile
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex align-items-center">
+    <div class="row justify-content-center flex-grow-1">
+        <div class="col-6">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <p>
+                    <label for="id_first_name">Имя:</label>
+                    <input type="text" name="first_name" class="form-control" maxlength="150" id="id_first_name" value="{{ user.first_name }}">
+                </p>
+
+                <p>
+                    <label for="id_username">Имя пользователя:</label>
+                    <input type="text" name="username" class="form-control" maxlength="150" required=""
+                           aria-describedby="id_username_helptext" id="id_username" value="{{ user.username }}">
+                    <span class="helptext" id="id_username_helptext">Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.</span>
+                </p>
+
+                <p>
+                    <label for="id_email">Адрес электронной почты:</label>
+                    <input type="email" name="email" class="form-control" maxlength="254" id="id_email" value="{{ user.email }}">
+                </p>
+
+                <p>
+                    <label for="user-profile-image">Profile image</label>
+                    <input type="file" class="form-control" id="user-profile-image" name="profile_image">
+                </p>
+
+                <button class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

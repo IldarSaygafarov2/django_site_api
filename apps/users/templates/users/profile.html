@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="mb-5">
+        <div class="row align-items-end">
+            <div class="col-6">
+                {% if user.profile.image %}
+                <div class="rounded-circle overflow-hidden mb-4 mx-auto" style="width: 150px;height:150px;">
+                    <img src="{{ user.profile.image.url }}" alt="" class="w-100 h-100">
+                </div>
+                {% endif %}
+                <ul class="list-group list-group-action">
+                    <li class="list-group-item list-group-item-action">
+                        <b>Username: </b>{{ user.username }}
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Email: </b>{{ user.email }}
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Joined at: </b>{{ user.date_joined }}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6">
+                <ul class="list-group list-group-action">
+
+                    <li class="list-group-item list-group-item-action">
+                        <b>Total posts: </b> {{ total_posts }}
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Total views quantity: </b> {{ total_posts_views }}
+                        <!--получить общее количество просмотров всех постов пользователя-->
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Total comments quantity: </b> {{ total_posts_comments }}
+                        <!--получить общее количество комментов всех постов пользователя-->
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Total likes: </b>{{ total_likes }}
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Total dislikes: </b>{{ total_dislikes }}
+                    </li>
+                    <li class="list-group-item list-group-item-action">
+                        <b>Total subscribers: </b>{{ subscribers_total }}
+                    </li>
+                    <!--            <li class="list-group-item list-group-item-action"></li>-->
+                </ul>
+            </div>
+        </div>
+        <a href="{% url 'edit-profile' %}" class="btn btn-info mt-4 d-block">Edit profile</a>
+    </div>
+    <!--    вывести все посты автора -->
+    <div class="row row-gap-4">
+        {% for post in posts %}
+        <div class="col-4">
+            {% include 'components/_card.html' %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

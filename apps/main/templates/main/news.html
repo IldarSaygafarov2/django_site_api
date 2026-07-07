@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+News
+{% endblock %}
+
+
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-2">
+            <div class="list-group">
+                {% with a=request.resolver_match.kwargs.category_slug %}
+
+                    {% for item in categories_data %}  <!--for item in categories_data Category(1), Category(2), Category(3)-->
+                    <a href="{% url 'news-category-page' item.slug %}"
+                       class="list-group-item list-group-item-action {% if a == item.slug %}active{% endif %}">{{ item }}</a>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-10">
+            <div class="row row-gap-4">
+                {% for post in posts %}
+                <div class="col-3">{% include 'components/_card.html' %}</div>
+                {% empty %}
+                <h1 class="text-center">Посты не найдены</h1>
+                {% endfor %}
+            </div>
+            {% if posts.has_other_pages %}
+            <nav aria-label="Page navigation example" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+
+                    {% for i in posts.paginator.page_range %}
+
+                    {% if posts.number == i%}
+                    <li class="page-item"><a class="page-link active">{{i}}</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+                    {% endif %}
+
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!--
+TODO: вывести кол-во подписчиков пользователя на странице профиля
+-->
+
