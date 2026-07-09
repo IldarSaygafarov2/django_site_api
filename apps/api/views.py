@@ -24,7 +24,7 @@ from .serializers import (
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
-
+from apps.main.tasks import some_hard_function
 
 @extend_schema(responses={200: UserProfileSerializer})
 @api_view(['GET'])
@@ -73,11 +73,17 @@ class CategoryListCreateView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         new = serializer.save()
         new_serializer = CategorySerializer(new)
+
         return Response(new_serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        some_hard_function.apply_async()  # .delay()
+        return super().list(request, *args, **kwargs)
 
     @extend_schema(summary='create_new_category',
                    responses={200: CategorySerializer})
     def post(self, request, *args, **kwargs):
+
         return super().post(request, *args, **kwargs)
 
 
