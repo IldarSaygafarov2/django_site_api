@@ -24,6 +24,7 @@ DEBUG = True if os.getenv('DEBUG') == 'True' else False
 # ['127.0.0.1']
 ALLOWED_HOSTS = [host for host in os.getenv('ALLOWED_HOSTS').split(',') if host]  # http://127.0.0.1:8000/
 
+CSRF_TRUSTED_ORIGINS = [host for host in os.getenv('CSRF_TRUSTED_ORIGINS').split(',') if host]
 
 # https://uzum.uz -> IP address -> nginx -> backend
 # https://uzum.uz <- IP address <- nginx <- backend
